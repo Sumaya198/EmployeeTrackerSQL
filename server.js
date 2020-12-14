@@ -45,7 +45,7 @@ function addNewEntry() {
       } else if (addWhatAnswers.choice === "View departments") {
         viewAllDepartment();
       } else {
-        updateEmployee();
+        updateEmployeeRole();
       }
     });
 }
@@ -178,89 +178,35 @@ function viewAllEmployees() {
 }
 
 //==================UPDATING==============================
-var roleArr = [];
-function selectRole() {
-  connection.query("SELECT * FROM role", function(err, res) {
-    if (err) throw err
-    for (var i = 0; i < res.length; i++) {
-      roleArr.push(res[i].title);
-    }
 
-  })
-  return roleArr;
-}
-// function updateEmployeeRole() {
-//   inquirer
-//     .prompt([
-//       {
-//         message:
-//           "what is the first name of the employee you would like to update?",
-//         type: "input",
-//         name: "name",
-//       },
-//       {
-//         message: "enter the new role ID:",
-//         type: "number",
-//         name: "role_id",
-//       },
-//     ])
-//     .then(function (response) {
-//       connection.query(
-//         "UPDATE employee SET role_id = role_id WHERE first_name = name",
-//         [response.role_id, response.name],
-//         function (err, data) {
-//           console.table(response);
-//         }
-//       );
-//       buildTracker();
-//     });
-// }
-
-function updateEmployee() {
-  connection.query("SELECT employee.last_name, role.title FROM employee JOIN role ON employee.role_id = role.id;", function(err, res) {
-  // console.log(res)
-   if (err) throw err
-   console.log(res)
-  inquirer.prompt([
-        {
-          name: "lastName",
-          type: "rawlist",
-          choices: function() {
-            var lastName = [];
-            for (var i = 0; i < res.length; i++) {
-              lastName.push(res[i].last_name);
-            }
-            return lastName;
-          },
-          message: "What is the Employee's last name? ",
-        },
-        {
-          name: "role",
-          type: "rawlist",
-          message: "What is the Employees new title? ",
-          choices: selectRole()
-        },
-    ]).then(function(val) {
-      var roleId = selectRole().indexOf(val.role) + 1
-      connection.query("UPDATE employee SET WHERE ?", 
+function updateEmployeeRole() {
+  inquirer
+    .prompt([
       {
-        last_name: val.lastName
-         
-      }, 
+        message:
+          "what is the first name of the employee you would like to update?",
+        type: "input",
+        name: "name",
+      },
       {
-        role_id: roleId
-         
-      }, 
-      function(err){
-          if (err) throw err
-          console.table(val)
-          startPrompt()
-      })
-
-  });
-});
-
+        message: "enter the new role ID:",
+        type: "number",
+        name: "role_id",
+      },
+    ])
+    .then(function (response) {
+      connection.query(
+        "UPDATE employee SET role_id = role_id WHERE first_name = name",
+        [response.role_id, response.name],
+        function (err, data) {
+          console.table(response);
+        }
+      );
+      buildTracker();
+    });
 }
+
+
 //============ CONTINUE BUILDING EMPLOYEE TRACKER =========
 
 function buildTracker() {
